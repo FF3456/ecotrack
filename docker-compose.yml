@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: ecotrack-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  servidor:
+    build: ./servidor
+    container_name: ecotrack-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/ecotrack
+    depends_on:
+      - mongo
+
+  cliente:
+    build: ./cliente
+    container_name: ecotrack-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - servidor
+
+volumes:
+  mongo_data:
